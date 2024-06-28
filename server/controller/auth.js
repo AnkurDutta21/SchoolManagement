@@ -15,11 +15,15 @@ const register = async (req, res, next) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
 
+    if (!name) {
+      return errorResponse(res, 400, messageHelper.NAME_REQUIRED);
+    }
+
     if (!isEmail(email) || !email) {
       return errorResponse(res, 400, messageHelper.INVALID_EMAIL);
     }
 
-    if (!email || !password) {
+    if (!email || !password || !confirmPassword) {
       return errorResponse(res, 400, messageHelper.BAD_REQUEST);
     }
 
@@ -28,8 +32,8 @@ const register = async (req, res, next) => {
       return errorResponse(res, 400, messageHelper.USER_EXIST);
     }
 
-    if (password != confirmPassword) {
-      return errorResponse(res, 401, messageHelper.PASSWORD_DONT_MATCH);
+    if (password !== confirmPassword) {
+      return errorResponse(res, 400, messageHelper.PASSWORD_DONT_MATCH);
     }
 
     const hashedPassword = await hashData(password);
@@ -42,12 +46,7 @@ const register = async (req, res, next) => {
 
     await user.save();
 
-    successResponse(
-      res,
-      200,
-      messageHelper.USER_CREATED,
-      (data = { name, email })
-    );
+    successResponse(res, 201, messageHelper.USER_CREATED, { name, email });
   } catch (error) {
     next(error);
   }
@@ -64,6 +63,7 @@ const login = async (req, res, next) => {
     if (!email || !password) {
       return errorResponse(res, 400, messageHelper.BAD_REQUEST);
     }
+
     const user = await User.findOne({ email });
     if (!user) {
       return errorResponse(res, 401, messageHelper.USER_NOT_EXIST);
@@ -76,17 +76,12 @@ const login = async (req, res, next) => {
 
     const token = await jwtsign(user._id);
 
-    successResponse(
-      res,
-      200,
-      messageHelper.USER_LOGEDIN,
-      (data = { user: user.name, token })
-    );
-
+    successResponse(res, 200, messageHelper.USER_LOGGEDIN, { user: user.name, token });
   } catch (error) {
     next(error);
   }
 };
+
 const logout = async (req, res, next) => {
   try {
     return successResponse(res, 200, messageHelper.USER_LOGGED_OUT);

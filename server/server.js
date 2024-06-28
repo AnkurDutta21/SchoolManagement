@@ -5,6 +5,8 @@ const cors =  require('cors')
 const errorHandler = require('./middleware/errorHandler')
 const authRoutes = require('./routes/auth')
 const classRoutes = require('./routes/class')
+const studentRoutes = require('./routes/student')
+const teacherRoutes = require('./routes/teacher')
 
 
 const app = express();
@@ -13,7 +15,9 @@ app.use(express.json())
 app.use(cors())
 
 app.use("/api/v1/auth",authRoutes)
-app.use("/api/v1/auth",classRoutes)
+app.use("/api/v1/class",classRoutes)
+app.use("/api/v1/student",studentRoutes)
+app.use("/api/v1/teacher",teacherRoutes)
 
 // health check
 app.use('/health',(req,res)=>{
