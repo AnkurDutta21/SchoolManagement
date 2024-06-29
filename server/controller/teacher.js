@@ -1,18 +1,24 @@
+const Class = require('../model/class');
 const Teacher = require('../model/teacher');
 const { errorResponse, successResponse } = require('../utils/responseHelper');
 
-// Create a new teacher
 const createTeacher = async (req, res, next) => {
   try {
     const { name, gender, dob, contactDetails, salary, assignedClass } = req.body;
 
-    // Validation
-    if (!name || !gender || !dob || !contactDetails || !salary) {
+    if (!name || !gender || !dob || !contactDetails || !salary || !assignedClass) {
       return errorResponse(res, 400, 'Missing required fields');
     }
 
     const newTeacher = new Teacher({ name, gender, dob, contactDetails, salary, assignedClass });
     await newTeacher.save();
+
+    // Add teacher reference to each class
+    for (const classId of assignedClass) {
+      await Class.findByIdAndUpdate(classId, {
+        $push: { teachers: newTeacher._id },
+      });
+    }
 
     successResponse(res, 201, 'Teacher created successfully', newTeacher);
   } catch (error) {
@@ -26,15 +32,40 @@ const updateTeacher = async (req, res, next) => {
     const { id } = req.params;
     const { name, gender, dob, contactDetails, salary, assignedClass } = req.body;
 
+    const currentTeacher = await Teacher.findById(id);
+
+    if (!currentTeacher) {
+      return errorResponse(res, 404, 'Teacher not found');
+    }
+
+    // Remove teacher from old classes 
+    if (assignedClass && assignedClass.length) {
+      const oldClassIds = currentTeacher.assignedClass;
+
+      // Remove teacher reference from classes
+      for (const oldClassId of oldClassIds) {
+        if (!assignedClass.includes(oldClassId.toString())) {
+          await Class.findByIdAndUpdate(oldClassId, {
+            $pull: { teachers: id },
+          });
+        }
+      }
+
+      // Add teacher reference to new classes
+      for (const newClassId of assignedClass) {
+        if (!oldClassIds.includes(newClassId.toString())) {
+          await Class.findByIdAndUpdate(newClassId, {
+            $push: { teachers: id },
+          });
+        }
+      }
+    }
+
     const updatedTeacher = await Teacher.findByIdAndUpdate(
       id,
       { name, gender, dob, contactDetails, salary, assignedClass },
       { new: true, runValidators: true }
     );
-
-    if (!updatedTeacher) {
-      return errorResponse(res, 404, 'Teacher not found');
-    }
 
     successResponse(res, 200, 'Teacher updated successfully', updatedTeacher);
   } catch (error) {
@@ -47,17 +78,28 @@ const deleteTeacher = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const deletedTeacher = await Teacher.findByIdAndDelete(id);
+    const teacher = await Teacher.findById(id);
 
-    if (!deletedTeacher) {
+    if (!teacher) {
       return errorResponse(res, 404, 'Teacher not found');
     }
+
+    // Remove teacher from all assigned classes
+    for (const classId of teacher.assignedClass) {
+      await Class.findByIdAndUpdate(classId, {
+        $pull: { teachers: id },
+      });
+    }
+
+    // Delete teacher
+    const deletedTeacher = await Teacher.findByIdAndDelete(id);
 
     successResponse(res, 200, 'Teacher deleted successfully', deletedTeacher);
   } catch (error) {
     next(error);
   }
 };
+
 
 // Get teacher by ID
 const getTeacherById = async (req, res, next) => {
