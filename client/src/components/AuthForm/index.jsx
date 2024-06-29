@@ -38,11 +38,11 @@ const DynamicAuthForm = ({ formType, setFormType }) => {
                 setFormType('login');
             } else {
                 const response = await postApiData(URL + ENDPOINTS.LOGIN, values);
-                console.log(response,';;;')
                 if (response?.success) {
-                    localStorage.setItem("Token", data?.token);
-                    console.log('Navigating to home...');
+                    console.log(response,';;;')
+                    localStorage.setItem("Token", response?.data?.token);
                     successToast(response?.message || 'Login successful');
+                    console.log('Navigating to home...');
                     navigate('/');
                 } else {
                     errorToast(response?.error || 'Login failed');

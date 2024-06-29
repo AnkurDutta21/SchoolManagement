@@ -57,6 +57,19 @@ const useFetchData = () => {
     }
   };
 
+  const putApiData = async (url, data) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.put(url, data, { headers: getHeaders() });
+      return response.data;
+    } catch (err) {
+      handleError(err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const patchApiData = async (url, data) => {
     setLoading(true);
@@ -89,6 +102,7 @@ const useFetchData = () => {
   return {
     getApiData,
     postApiData,
+    putApiData,
     patchApiData,
     deleteApiData,
     loading,
