@@ -6,7 +6,7 @@ const navigate = useNavigate()
 
   useEffect(() => {
     if (!localStorage.getItem('Token')) {
-      navigate()
+      navigate('/auth')
     }
   }, []);
 
