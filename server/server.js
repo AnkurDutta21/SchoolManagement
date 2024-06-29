@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth')
 const classRoutes = require('./routes/class')
 const studentRoutes = require('./routes/student')
 const teacherRoutes = require('./routes/teacher')
+const analyticsRoute =require('./routes/analytics')
 
 
 const app = express();
@@ -18,6 +19,7 @@ app.use("/api/v1/auth",authRoutes)
 app.use("/api/v1/class",classRoutes)
 app.use("/api/v1/student",studentRoutes)
 app.use("/api/v1/teacher",teacherRoutes)
+app.use("/api/v1/analytics",analyticsRoute)
 
 // health check
 app.use('/health',(req,res)=>{

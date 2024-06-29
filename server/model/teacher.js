@@ -1,17 +1,17 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const teacherSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   gender: {
     type: String,
-    enum: ['Male', 'Female'],
-    required: true
+    enum: ["Male", "Female"],
+    required: true,
   },
   dob: {
     type: Date,
-    required: true
+    required: true,
   },
   contactDetails: {
     type: String,
@@ -19,14 +19,16 @@ const teacherSchema = new mongoose.Schema({
   },
   salary: {
     type: Number,
-    required: true
+    required: true,
   },
-  assignedClass: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Class'
-  },
+  assignedClass: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
+    },
+  ],
 });
 
-const Teacher = mongoose.model('Teacher', teacherSchema);
+const Teacher = mongoose.model("Teacher", teacherSchema);
 
 module.exports = Teacher;
