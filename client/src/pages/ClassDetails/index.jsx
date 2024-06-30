@@ -8,7 +8,7 @@ import Loader from "../../utils/Loader";
 
 const ClassDetails = () => {
   const { id } = useParams();
-  const { getApiData, loading } = useFetchData(); 
+  const { getApiData, loading } = useFetchData();
   const [classData, setClassData] = useState(null);
   const [genderData, setGenderData] = useState(null);
 
@@ -45,9 +45,9 @@ const ClassDetails = () => {
 
     fetchData();
     fetchGenderData();
-  }, [id]); 
+  }, [id]);
 
-  if (loading) return <Loader />; 
+  if (loading) return <Loader />;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -60,22 +60,30 @@ const ClassDetails = () => {
             <p>Year: {classData.year}</p>
             <div>
               <h3 className="font-semibold mt-4">Teachers:</h3>
-              <ul className="list-disc list-inside">
-                {classData.teacher.map((teacher) => (
-                  <li key={teacher._id}>{teacher.name}</li>
-                ))}
-              </ul>
+              {classData?.teacher.length > 0 ? (
+                <ul className="list-disc list-inside">
+                  {classData?.teacher.map((teacher) => (
+                    <li key={teacher._id}>{teacher.name}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No teachers assigned to this class</p>
+              )}
             </div>
             <div>
               <h3 className="font-semibold mt-4">Students:</h3>
-              <ul className="list-disc list-inside">
-                {classData.students.map((student) => (
-                  <li key={student._id}>{student.name}</li>
-                ))}
-              </ul>
+              {classData?.students.length > 0 ? (
+                <ul className="list-disc list-inside mb-2">
+                  {classData?.students.map((student) => (
+                    <li key={student._id}>{student.name}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mb-3">No students enrolled in this class</p>
+              )}
             </div>
-            <p>Max Students Allowed: {classData.maxStudents}</p>
-            <p>Total Student Fees: ${classData.studentFees}</p>
+            <p className="mb-3">Max Students Allowed: {classData.maxStudents}</p>
+            <p className="mb-3">Total Student Fees: ${classData.studentFees}</p>
           </div>
           <div className="flex justify-center items-center">
             <div className="w-full max-w-md">
