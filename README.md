@@ -7,9 +7,6 @@ Welcome to the School Management repository! This web-based application is desig
 - [Bonus Features](#bonus-features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
 
 ## Features
 
@@ -68,8 +65,44 @@ To get started with the School Management App, follow these steps:
    ```bash
    git clone https://github.com/yourusername/school-management-app.git
    cd school-management-app
-2.**Install Dependencies:**
-   -For the backend (Express.js, Node.js):
-    ```bash
-    cd backend
-    npm install
+2. **Install Dependencies:**
+ - For the backend (Express.js, Node.js):
+   ```bash
+   cd server
+   npm install
+- For the frontend (React.js):
+  ```bash
+   cd ../client
+   npm install
+3. **Environment Variables:**
+  - Create a .env file in the backend directory and add the following environment variables:
+    ```MONGO_URI=<Your MongoDB URI>
+     PORT=5000
+4. **Start the Application:**
+   - Start the backend server:
+     ```bash
+     cd server
+     npm start
+   - Start the frontend server:
+     ```bash
+     cd client
+     npm start
+5. **Access the Application:**
+ - Open your browser and navigate to http://localhost:5743 to start using the School 
+   Management App.
+## Usage
+1. Login:
+ - Use the provided credentials to log in to the application.
+2. Dashboard:
+ - Access the main dashboard to view an overview of the school management system.
+3. Manage Classes:
+ - Create, read, update, and delete class records.
+ - View class details and analytics by clicking on a class.
+4. Manage Teachers:
+ - Create, read, update, and delete teacher records.
+5. Manage Students:
+ - Create, read, update, and delete student records.
+6. View Analytics:
+ - Access the financial analytics page to view expenses and income.
+   Toggle between monthly and yearly views and select specific months and years for 
+   detailed analysis.
