@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFetchData from '../../hooks/useFetchData';
 import { ENDPOINTS, URL } from '../../utils/apiService';
@@ -6,16 +6,18 @@ import DynamicTable from '../../components/Table';
 import { successToast, errorToast } from '../../utils/showToast';
 import { FaPlus } from 'react-icons/fa';
 import Loader from '../../utils/Loader';
+import { debounce } from '../../utils/debounce';
 
 const ClassTable = () => {
   const [classes, setClasses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState(''); // Separate state for input field
+  const [searchQuery, setSearchQuery] = useState(''); // Debounced query state
   const [sortField, setSortField] = useState('year');
   const [sortOrder, setSortOrder] = useState('asc');
-  const { getApiData, deleteApiData,loading } = useFetchData();
+  const { getApiData, deleteApiData, loading } = useFetchData();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,9 +71,24 @@ const ClassTable = () => {
     setSortOrder(newOrder);
     fetchClasses(currentPage);
   };
+
+  const debouncedSearch = useCallback(
+    debounce((query) => {
+      setSearchQuery(query);
+      setCurrentPage(1); // Reset to the first page for new search
+    }, 1500),
+    []
+  );
+
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value);
+    debouncedSearch(e.target.value);
+  };
+
   if (loading) {
     return <Loader />;
   }
+
   return (
     <div className="px-4 py-2">
       <div className="flex justify-between items-center mb-4">
@@ -88,11 +105,10 @@ const ClassTable = () => {
         <input
           type="text"
           placeholder="Search by class name"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="px-4 py-2 border rounded-md"
+          value={searchInput} // Controlled component with searchInput
+          onChange={handleSearchChange}
+          className="px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
         />
-        
       </div>
       <DynamicTable
         data={classes}

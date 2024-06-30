@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useFetchData from '../../hooks/useFetchData';
 import { ENDPOINTS, URL } from '../../utils/apiService';
 import DynamicTable from '../../components/Table';
 import { successToast, errorToast } from '../../utils/showToast';
-import { FaPlus, FaSortAlphaDown, FaSortAlphaUp } from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 import Loader from '../../utils/Loader';
+import { debounce } from '../../utils/debounce';
 
 const StudentTable = () => {
   const [students, setStudents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
   const [genderFilter, setGenderFilter] = useState('');
-  const { getApiData, deleteApiData,loading } = useFetchData();
+  const { getApiData, deleteApiData, loading } = useFetchData();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,6 +77,19 @@ const StudentTable = () => {
     fetchStudents(currentPage);
   };
 
+  const debouncedSearch = useCallback(
+    debounce((query) => {
+      setSearchQuery(query);
+      setCurrentPage(1);
+    }, 500),
+    []
+  );
+
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value);
+    debouncedSearch(e.target.value);
+  };
+
   const fields = ['name', 'gender', 'dob', 'contactDetails', 'feesPaid', 'class'];
   if (loading) {
     return <Loader />;
@@ -96,8 +111,8 @@ const StudentTable = () => {
           <input
             type="text"
             placeholder="Enter student name"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchInput}
+            onChange={handleSearchChange}
             className="px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
           />
         </div>
