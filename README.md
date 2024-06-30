@@ -7,7 +7,7 @@ Welcome to the School Management repository! This web-based application is desig
 - [Bonus Features](#bonus-features)
 - [Installation](#installation)
 - [Usage](#usage)
-
+- [Api Documentation](#api-documentation)
 ## Features
 
 ### Data Management
@@ -90,6 +90,8 @@ To get started with the School Management App, follow these steps:
 5. **Access the Application:**
  - Open your browser and navigate to http://localhost:5743 to start using the School 
    Management App.
+## Api Documentation 
+-https://documenter.getpostman.com/view/26774878/2sA3duHDZ2
 ## Usage
 1. Login:
  - Use the provided credentials to log in to the application.
