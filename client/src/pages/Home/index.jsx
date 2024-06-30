@@ -43,9 +43,9 @@ const Home = () => {
             <div className="text-gray-500">Total Teachers</div>
           </div>
         </div>
-        <div className="flex flex-row items-center">
-          <div className='flex flex-col items-center justify-between'>
-          <img src={graph} alt="graph" className="w-full max-w-md mb-4" />
+        <div className="flex flex-row items-center jutify-center w-3/5 m-auto">
+          <div className='flex flex-col items-center'>
+          <img src={graph} alt="graph" className="w-full max-w-md" />
           <div className="text-blue-500 hover:underline cursor-pointer mb-4 flex flex-row items-center" onClick={()=>navigate('/analytics')}>Go to Analytics<AiOutlineArrowRight/></div>
           </div>
           <div className="w-full max-w-md">

@@ -26,9 +26,20 @@ function ProfitAnalysis() {
 
   return (
     <div>
-      <div>
-        <button onClick={() => setChartType('month')}>Month</button>|
-        <button onClick={() => setChartType('year')}>Year</button>
+        <div className="mb-4 mt-8 ml-5">
+        <button
+          className={`text-blue-500 ${chartType === 'month' ? 'font-bold' : ''}`}
+          onClick={() => setChartType('month')}
+        >
+          Month
+        </button>
+        <span className="mx-2">|</span>
+        <button
+          className={`text-blue-500 ${chartType === 'year' ? 'font-bold' : ''}`}
+          onClick={() => setChartType('year')}
+        >
+          Year
+        </button>
       </div>
 
       {data ? (

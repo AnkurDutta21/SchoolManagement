@@ -41,6 +41,7 @@ const DynamicAuthForm = ({ formType, setFormType }) => {
                 if (response?.success) {
                     console.log(response,';;;')
                     localStorage.setItem("Token", response?.data?.token);
+                    localStorage.setItem("UserName", response?.data?.user);
                     successToast(response?.message || 'Login successful');
                     console.log('Navigating to home...');
                     navigate('/');
