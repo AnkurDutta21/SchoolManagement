@@ -74,7 +74,8 @@ const DynamicTable = ({
                   {showView && (
                     <button
                       onClick={() => onView(item._id)}
-                      className="text-indigo-600 hover:text-indigo-900 mr-2"
+                      className="text-indigo-600 hover:text-indigo-900 mr-3"
+                      title="View"
                     >
                       <FaEye />
                     </button>
@@ -82,12 +83,14 @@ const DynamicTable = ({
                   <button
                     onClick={() => onEdit(item._id)}
                     className="text-yellow-600 hover:text-yellow-900 mr-2"
+                    title="Edit"
                   >
                     <FaEdit />
                   </button>
                   <button
                     onClick={() => onDelete(item._id)}
                     className="text-red-600 hover:text-red-900"
+                    title="Delete"
                   >
                     <FaTrash />
                   </button>

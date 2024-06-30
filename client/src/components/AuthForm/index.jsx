@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import * as Yup from 'yup';
 import useFetchData from '../../hooks/useFetchData';
 import { ENDPOINTS, URL } from '../../utils/apiService';
@@ -10,6 +11,8 @@ import Loader from '../../utils/Loader';
 const DynamicAuthForm = ({ formType, setFormType }) => {
     const navigate = useNavigate();
     const { postApiData, loading } = useFetchData();
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const isSignup = formType === 'signup';
 
@@ -40,11 +43,9 @@ const DynamicAuthForm = ({ formType, setFormType }) => {
             } else {
                 const response = await postApiData(URL + ENDPOINTS.LOGIN, values);
                 if (response?.success) {
-                    console.log(response, ';;;')
                     localStorage.setItem("Token", response?.data?.token);
                     localStorage.setItem("UserName", response?.data?.user);
                     successToast(response?.message || 'Login successful');
-                    console.log('Navigating to home...');
                     navigate('/');
                 } else {
                     errorToast(response?.error || 'Login failed');
@@ -56,9 +57,11 @@ const DynamicAuthForm = ({ formType, setFormType }) => {
             setSubmitting(false);
         }
     };
+
     if (loading) {
-        <Loader />
+        return <Loader />;
     }
+
     return (
         <div className="max-w-md mx-auto mt-10">
             <Formik
@@ -94,29 +97,45 @@ const DynamicAuthForm = ({ formType, setFormType }) => {
                             />
                             <ErrorMessage name="email" component="div" className="text-red-500 text-xs italic" />
                         </div>
-                        <div className="mb-4">
+                        <div className="mb-4 relative">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                                 Password
                             </label>
-                            <Field
-                                type="password"
-                                id="password"
-                                name="password"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            />
+                            <div className="relative">
+                                <Field
+                                    type={showPassword ? 'text' : 'password'}
+                                    id="password"
+                                    name="password"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                />
+                                <span
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                                >
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                </span>
+                            </div>
                             <ErrorMessage name="password" component="div" className="text-red-500 text-xs italic" />
                         </div>
                         {isSignup && (
-                            <div className="mb-4">
+                            <div className="mb-4 relative">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
                                     Confirm Password
                                 </label>
-                                <Field
-                                    type="password"
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                />
+                                <div className="relative">
+                                    <Field
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    />
+                                    <span
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                                    >
+                                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                                    </span>
+                                </div>
                                 <ErrorMessage name="confirmPassword" component="div" className="text-red-500 text-xs italic" />
                             </div>
                         )}
