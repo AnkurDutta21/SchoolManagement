@@ -1,8 +1,21 @@
 import React from 'react';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import { formatDate } from '../../utils/formatDate';
+import Pagination from '../Pagination';
 
-const DynamicTable = ({ data, fields, onEdit, onDelete, onView, showView }) => {
+const DynamicTable = ({
+  data,
+  fields,
+  onEdit,
+  onDelete,
+  onView,
+  showView,
+  currentPage,
+  totalPages,
+  onPageChange,
+  setItemsPerPage
+}) => {
+
   const getFieldValue = (item, field) => {
     const keys = field.split('.');
     let value = item;
@@ -27,7 +40,7 @@ const DynamicTable = ({ data, fields, onEdit, onDelete, onView, showView }) => {
                 key={index}
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                {field}
+                {field.label || field}
               </th>
             ))}
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -40,7 +53,7 @@ const DynamicTable = ({ data, fields, onEdit, onDelete, onView, showView }) => {
             <tr key={item._id}>
               {fields.map((field, index) => (
                 <td key={index} className="px-6 py-4 whitespace-nowrap">
-                  {getFieldValue(item, field)}
+                  {getFieldValue(item, field.field || field)}
                 </td>
               ))}
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -69,6 +82,12 @@ const DynamicTable = ({ data, fields, onEdit, onDelete, onView, showView }) => {
           ))}
         </tbody>
       </table>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        setItemsPerPage={setItemsPerPage}
+      />
     </div>
   );
 };

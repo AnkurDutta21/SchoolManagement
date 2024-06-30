@@ -68,15 +68,30 @@ const getTotalCounts = async (req, res, next) => {
     const studentCount = await Student.countDocuments();
     const teacherCount = await Teacher.countDocuments();
 
+    // Aggregating the gender count for students
+    const genderCounts = await Student.aggregate([
+      {
+        $group: {
+          _id: "$gender",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const genderCount = genderCounts.reduce((acc, gender) => {
+      acc[gender._id] = gender.count;
+      return acc;
+    }, {});
+
     successResponse(res, 200, "Total counts", {
       classes: classCount,
       students: studentCount,
       teachers: teacherCount,
+      genderCounts: genderCount,
     });
   } catch (error) {
     next(error);
   }
 };
-
 
 module.exports = {getFinancials,getGenderDistribution,getTotalCounts};

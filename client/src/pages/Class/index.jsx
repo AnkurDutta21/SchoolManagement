@@ -8,24 +8,26 @@ import { FaPlus } from 'react-icons/fa';
 
 const ClassTable = () => {
   const [classes, setClasses] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage,setItemsPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(1);
   const { getApiData, deleteApiData } = useFetchData();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchClasses = async () => {
-      const response = await getApiData(URL + ENDPOINTS.CLASSES);
-      if (response?.success) {
-        setClasses(response.data.classes);
-        successToast(response.message);
-      } else {
-        errorToast(response?.message || 'Failed to fetch classes');
-      }
-    };
-    
-    fetchClasses();
-  }, []);
+    fetchClasses(currentPage);
+  }, [currentPage,itemsPerPage]);
 
-  const fields = ['name', 'year', 'studentFees', 'maxStudents'];
+  const fetchClasses = async (page) => {
+    const response = await getApiData(`${URL + ENDPOINTS.CLASSES}?page=${page}&limit=${itemsPerPage}`);
+    if (response?.success) {
+      setClasses(response.data.classes);
+      setTotalPages(response?.data?.totalPages);
+      successToast(response.message);
+    } else {
+      errorToast(response?.message || 'Failed to fetch classes');
+    }
+  };
 
   const handleEdit = (id) => {
     navigate(`/class/${id}`);
@@ -35,7 +37,7 @@ const ClassTable = () => {
     const response = await deleteApiData(URL + ENDPOINTS.CLASSES + `/${id}`);
     if (response?.success) {
       successToast(response?.message);
-      setClasses(prevClasses => prevClasses.filter(classItem => classItem.id !== id));
+      fetchClasses(currentPage);
     } else {
       errorToast(response?.message);
     }
@@ -49,25 +51,35 @@ const ClassTable = () => {
     navigate('/class/new');
   };
 
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return (
     <div className="px-4 py-2">
-    <div className="flex justify-between items-center mb-4">
-      <h2 className="text-lg font-semibold">Class Table</h2>
-      <button
-        onClick={handleCreate}
-        className="flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600"
-      >
-        <FaPlus className="mr-2" />
-        Create Class
-      </button>
-    </div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Class Table</h2>
+        <button
+          onClick={handleCreate}
+          className="flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600"
+        >
+          <FaPlus className="mr-2" />
+          Create Class
+        </button>
+      </div>
       <DynamicTable 
         data={classes} 
-        fields={fields} 
+        fields={['name', 'year', 'studentFees', 'maxStudents']} 
         onEdit={handleEdit} 
         onDelete={handleDelete} 
         onView={handleView}
-        showView={true}  
+        showView={true}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        setItemsPerPage={setItemsPerPage}
       />
     </div>
   );
