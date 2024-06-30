@@ -28,7 +28,7 @@ const Header = () => {
           <div className="ml-2 text-white text-3xl font-semibold">SmartSchooler</div>
         </div>
         <div className="flex items-center">
-          <nav className="flex space-x-4 items-center">
+          {userName ? <nav className="flex space-x-4 items-center">
             <NavLink
               exact
               to="/"
@@ -86,6 +86,8 @@ const Header = () => {
               )}
             </div>
           </nav>
+            : ""
+          }
         </div>
       </div>
     </header>
