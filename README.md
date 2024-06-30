@@ -68,3 +68,8 @@ To get started with the School Management App, follow these steps:
    ```bash
    git clone https://github.com/yourusername/school-management-app.git
    cd school-management-app
+2.**Install Dependencies:**
+    For the backend (Express.js, Node.js):
+    ```bash
+    cd backend
+    npm install
