@@ -9,6 +9,8 @@ import StudentTable from './pages/Student';
 import TeacherTable from './pages/Teacher';
 import DynamicForm from './components/Form/index';
 import ProfitAnalysis from './pages/Analytics';
+import ClassDetails from './pages/ClassDetails';
+import NotFound from './pages/NotFound';
 
 const routes = [
   {
@@ -88,7 +90,20 @@ const routes = [
         </MainLayout>
       </ProtectedRoutes>
     )
-  }
+  },
+  {
+    path: '/classdetails/:id',
+    element: (
+      <ProtectedRoutes>
+        <MainLayout>
+          <ClassDetails />
+        </MainLayout>
+      </ProtectedRoutes>
+    )
+  },  {
+    path: '*',
+    element: <NotFound />,
+  },
 ];
 
 const Router = () => {

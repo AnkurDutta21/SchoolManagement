@@ -42,7 +42,7 @@ const ClassTable = () => {
   };
 
   const handleView = (id) => {
-    navigate(`/class/${id}`);
+    navigate(`/classdetails/${id}`);
   };
 
   const handleCreate = () => {

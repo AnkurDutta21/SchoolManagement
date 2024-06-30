@@ -146,7 +146,7 @@ const getStudentById = async (req, res, next) => {
 
 const getAllStudents = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 5 } = req.query;
     const skip = (page - 1) * limit;
 
     // Get students with pagination

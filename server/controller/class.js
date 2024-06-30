@@ -94,7 +94,7 @@ const getClassById = async (req, res, next) => {
 // Get all classes with pagination
 const getAllClasses = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 5 } = req.query;
     const skip = (page - 1) * limit;
 
     const classes = await Class.find()
