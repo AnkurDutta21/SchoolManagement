@@ -1,5 +1,6 @@
 const Class = require("../model/class");
 const Student = require("../model/student");
+const { FEILDS_MISSING, CLASS_NOT_FOUND, CLASS_MAXED, STUDENT_CREATED, STUDENT_NOT_FOUND, NEW_CLASS_NOT_FOUND, STUDENT_UPDATED, STUDENT_DELETED, STUDENT_FETCHED } = require("../utils/messageHelper");
 const { errorResponse, successResponse } = require("../utils/responseHelper");
 
 const createStudent = async (req, res, next) => {
@@ -10,21 +11,21 @@ const createStudent = async (req, res, next) => {
       dob,
       contactDetails,
       feesPaid,
-      class: classId, // Single class ID
+      class: classId,
     } = req.body;
 
     // Validation
     if (!name || !gender || !dob || !contactDetails || !feesPaid || !classId) {
-      return errorResponse(res, 400, "Missing required fields");
+      return errorResponse(res, 400, FEILDS_MISSING);
     }
 
     // Check class capacity
     const targetClass = await Class.findById(classId);
     if (!targetClass) {
-      return errorResponse(res, 404, "Class not found");
+      return errorResponse(res, 404, CLASS_NOT_FOUND);
     }
     if (targetClass.students.length >= targetClass.maxStudents) {
-      return errorResponse(res, 400, "Class is already at maximum capacity");
+      return errorResponse(res, 400, CLASS_MAXED);
     }
 
     // Create student
@@ -42,7 +43,7 @@ const createStudent = async (req, res, next) => {
     targetClass.students.push(newStudent._id);
     await targetClass.save();
 
-    successResponse(res, 201, "Student created successfully", newStudent);
+    successResponse(res, 201,STUDENT_CREATED , newStudent);
   } catch (error) {
     next(error);
   }
@@ -63,17 +64,17 @@ const updateStudent = async (req, res, next) => {
     const currentStudent = await Student.findById(id);
 
     if (!currentStudent) {
-      return errorResponse(res, 404, "Student not found");
+      return errorResponse(res, 404, STUDENT_NOT_FOUND);
     }
 
     // If class is being updated, check new class capacity
     if (newClassId && newClassId.toString() !== currentStudent.class.toString()) {
       const newClass = await Class.findById(newClassId);
       if (!newClass) {
-        return errorResponse(res, 404, "New class not found");
+        return errorResponse(res, 404,NEW_CLASS_NOT_FOUND );
       }
       if (newClass.students.length >= newClass.maxStudents) {
-        return errorResponse(res, 400, "New class is already at maximum capacity");
+        return errorResponse(res, 400, CLASS_MAXED);
       }
 
       // Remove student reference from old class
@@ -97,7 +98,7 @@ const updateStudent = async (req, res, next) => {
 
     const updatedStudent = await currentStudent.save();
 
-    successResponse(res, 200, "Student updated successfully", updatedStudent);
+    successResponse(res, 200, STUDENT_UPDATED, updatedStudent);
   } catch (error) {
     next(error);
   }
@@ -110,7 +111,7 @@ const deleteStudent = async (req, res, next) => {
     const student = await Student.findById(id);
 
     if (!student) {
-      return errorResponse(res, 404, "Student not found");
+      return errorResponse(res, 404, STUDENT_NOT_FOUND);
     }
 
     // Remove student from class
@@ -121,7 +122,7 @@ const deleteStudent = async (req, res, next) => {
     // Delete student
     await student.deleteOne();
 
-    successResponse(res, 200, "Student deleted successfully", student);
+    successResponse(res, 200, STUDENT_DELETED, student);
   } catch (error) {
     next(error);
   }
@@ -135,10 +136,10 @@ const getStudentById = async (req, res, next) => {
     const student = await Student.findById(id).populate("class");
 
     if (!student) {
-      return errorResponse(res, 404, "Student not found");
+      return errorResponse(res, 404, STUDENT_NOT_FOUND);
     }
 
-    successResponse(res, 200, "Student fetched successfully", student);
+    successResponse(res, 200,STUDENT_FETCHED , student);
   } catch (error) {
     next(error);
   }
@@ -167,7 +168,7 @@ const getAllStudents = async (req, res, next) => {
     const totalStudents = await Student.countDocuments(query);
     const totalPages = Math.ceil(totalStudents / limit);
 
-    successResponse(res, 200, "Students fetched successfully", {
+    successResponse(res, 200,STUDENT_FETCHED, {
       students,
       totalPages,
       currentPage: Number(page),

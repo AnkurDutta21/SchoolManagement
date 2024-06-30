@@ -2,6 +2,7 @@ const Class = require('../model/class');
 const Teacher = require('../model/teacher');
 const Student = require('../model/student');
 const { errorResponse, successResponse } = require('../utils/responseHelper');
+const { FEILDS_MISSING, CLASS_CREATED, CLASS_NOT_FOUND, CLASS_UPDATED, CLASS_DELETED, CLASS_FETCHED } = require('../utils/messageHelper');
 
 // Create a new class
 const createClass = async (req, res, next) => {
@@ -9,13 +10,13 @@ const createClass = async (req, res, next) => {
     const { name, year, studentFees, maxStudents } = req.body;
 
     if (!name || !year || !studentFees || !maxStudents) {
-      return errorResponse(res, 400, 'Missing required fields');
+      return errorResponse(res, 400,FEILDS_MISSING);
     }
 
     const newClass = new Class({ name, year, studentFees, maxStudents });
     await newClass.save();
 
-    successResponse(res, 201, 'Class created successfully', newClass);
+    successResponse(res, 201,CLASS_CREATED, newClass);
   } catch (error) {
     next(error);
   }
@@ -34,10 +35,10 @@ const updateClass = async (req, res, next) => {
     );
 
     if (!updatedClass) {
-      return errorResponse(res, 404, 'Class not found');
+      return errorResponse(res, 404, CLASS_NOT_FOUND);
     }
 
-    successResponse(res, 200, 'Class updated successfully', updatedClass);
+    successResponse(res, 200, CLASS_UPDATED, updatedClass);
   } catch (error) {
     next(error);
   }
@@ -51,7 +52,7 @@ const deleteClass = async (req, res, next) => {
     const deletedClass = await Class.findById(id);
 
     if (!deletedClass) {
-      return errorResponse(res, 404, 'Class not found');
+      return errorResponse(res, 404, CLASS_NOT_FOUND);
     }
 
     // Remove the class reference from associated teachers
@@ -68,7 +69,7 @@ const deleteClass = async (req, res, next) => {
 
     await Class.findByIdAndDelete(id);
 
-    successResponse(res, 200, 'Class deleted successfully', deletedClass);
+    successResponse(res, 200,CLASS_DELETED , deletedClass);
   } catch (error) {
     next(error);
   }
@@ -82,10 +83,10 @@ const getClassById = async (req, res, next) => {
     const classData = await Class.findById(id).populate('teacher students');
 
     if (!classData) {
-      return errorResponse(res, 404, 'Class not found');
+      return errorResponse(res, 404, CLASS_NOT_FOUND);
     }
 
-    successResponse(res, 200, 'Class fetched successfully', classData);
+    successResponse(res, 200,CLASS_FETCHED , classData);
   } catch (error) {
     next(error);
   }
@@ -111,7 +112,7 @@ const getAllClasses = async (req, res, next) => {
     const totalClasses = await Class.countDocuments(query);
     const totalPages = Math.ceil(totalClasses / limit);
 
-    successResponse(res, 200, 'Classes fetched successfully', {
+    successResponse(res, 200, CLASS_FETCHED, {
       classes,
       totalPages,
       currentPage: Number(page),

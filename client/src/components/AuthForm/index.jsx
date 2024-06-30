@@ -40,7 +40,7 @@ const DynamicAuthForm = ({ formType, setFormType }) => {
             } else {
                 const response = await postApiData(URL + ENDPOINTS.LOGIN, values);
                 if (response?.success) {
-                    console.log(response,';;;')
+                    console.log(response, ';;;')
                     localStorage.setItem("Token", response?.data?.token);
                     localStorage.setItem("UserName", response?.data?.user);
                     successToast(response?.message || 'Login successful');
@@ -56,9 +56,9 @@ const DynamicAuthForm = ({ formType, setFormType }) => {
             setSubmitting(false);
         }
     };
-if(loading){
-    <Loader/>
-}
+    if (loading) {
+        <Loader />
+    }
     return (
         <div className="max-w-md mx-auto mt-10">
             <Formik

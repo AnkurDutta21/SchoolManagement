@@ -4,6 +4,7 @@ const Teacher = require('../model/teacher');
 const Student = require('../model/student');
 const Class = require('../model/class');
 const { successResponse } = require('../utils/responseHelper');
+const { DATA_FETCHED, CLASS_NOT_FOUND } = require('../utils/messageHelper');
 
 // Get monthly/yearly salary expenses and fees income
 const getFinancials = async (req, res) => {
@@ -25,7 +26,7 @@ const getFinancials = async (req, res) => {
      
     const profit = totalFees - totalSalary
 
-    successResponse(res,200,"datafetched sucessfully",{ totalSalary,
+    successResponse(res,200,DATA_FETCHED,{ totalSalary,
       totalFees,
       profit})
   } catch (error) {
@@ -39,14 +40,12 @@ const getGenderDistribution = async (req, res) => {
     const cls = await Class.findById(req.params.id).populate('students');
     
     if (!cls) {
-      return res.status(404).json({ message: 'Class not found' });
+      return res.status(404).json({ message: CLASS_NOT_FOUND });
     }
 
-    // Initialize counts
     let maleCount = 0;
     let femaleCount = 0;
 
-    // Count genders
     cls.students.forEach(student => {
       const genderLower = student.gender.toLowerCase();
       if (genderLower === 'male') {
@@ -56,19 +55,18 @@ const getGenderDistribution = async (req, res) => {
       }
     });
 
-   successResponse(res,200,"data fetched successfully",{maleCount,femaleCount})
+   successResponse(res,200,DATA_FETCHED,{maleCount,femaleCount})
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
+// all counts
 const getTotalCounts = async (req, res, next) => {
   try {
     const classCount = await Class.countDocuments();
     const studentCount = await Student.countDocuments();
     const teacherCount = await Teacher.countDocuments();
 
-    // Aggregating the gender count for students
     const genderCounts = await Student.aggregate([
       {
         $group: {
@@ -83,7 +81,7 @@ const getTotalCounts = async (req, res, next) => {
       return acc;
     }, {});
 
-    successResponse(res, 200, "Total counts", {
+    successResponse(res, 200, DATA_FETCHED, {
       classes: classCount,
       students: studentCount,
       teachers: teacherCount,
