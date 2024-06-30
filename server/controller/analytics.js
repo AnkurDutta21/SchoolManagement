@@ -3,6 +3,7 @@ const router = express.Router();
 const Teacher = require('../model/teacher');
 const Student = require('../model/student');
 const Class = require('../model/class');
+const { successResponse } = require('../utils/responseHelper');
 
 // Get monthly/yearly salary expenses and fees income
 const getFinancials = async (req, res) => {
@@ -24,11 +25,9 @@ const getFinancials = async (req, res) => {
      
     const profit = totalFees - totalSalary
 
-    res.json({
-      totalSalary,
+    successResponse(res,200,"datafetched sucessfully",{ totalSalary,
       totalFees,
-      profit
-    });
+      profit})
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -57,10 +56,27 @@ const getGenderDistribution = async (req, res) => {
       }
     });
 
-    res.json({ maleCount, femaleCount });
+   successResponse(res,200,"data fetched successfully",{maleCount,femaleCount})
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = {getFinancials,getGenderDistribution};
+const getTotalCounts = async (req, res, next) => {
+  try {
+    const classCount = await Class.countDocuments();
+    const studentCount = await Student.countDocuments();
+    const teacherCount = await Teacher.countDocuments();
+
+    successResponse(res, 200, "Total counts", {
+      classes: classCount,
+      students: studentCount,
+      teachers: teacherCount,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+module.exports = {getFinancials,getGenderDistribution,getTotalCounts};

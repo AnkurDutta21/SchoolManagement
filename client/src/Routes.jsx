@@ -8,6 +8,7 @@ import ClassTable from './pages/Class';
 import StudentTable from './pages/Student';
 import TeacherTable from './pages/Teacher';
 import DynamicForm from './components/Form/index';
+import ProfitAnalysis from './pages/Analytics';
 
 const routes = [
   {
@@ -74,6 +75,16 @@ const routes = [
       <ProtectedRoutes>
         <MainLayout>
           <DynamicForm />
+        </MainLayout>
+      </ProtectedRoutes>
+    )
+  },
+  {
+    path: '/analytics',
+    element: (
+      <ProtectedRoutes>
+        <MainLayout>
+          <ProfitAnalysis />
         </MainLayout>
       </ProtectedRoutes>
     )

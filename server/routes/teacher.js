@@ -11,7 +11,6 @@ const authHandler = require('../middleware/authHandler');
 
 const router = express.Router();
 
-// Use authHandler middleware for routes that require authentication
 router.post('/', authHandler, createTeacher);
 router.put('/:id', authHandler, validateObjectId, updateTeacher);
 router.delete('/:id', authHandler, validateObjectId, deleteTeacher);

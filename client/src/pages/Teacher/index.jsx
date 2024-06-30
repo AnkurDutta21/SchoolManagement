@@ -4,6 +4,7 @@ import useFetchData from '../../hooks/useFetchData';
 import { ENDPOINTS, URL } from '../../utils/apiService';
 import DynamicTable from '../../components/Table';
 import { successToast, errorToast } from '../../utils/showToast';
+import { FaPlus } from 'react-icons/fa';
 
 const TeacherTable = () => {
   const [teachers, setTeachers] = useState([]);
@@ -53,15 +54,24 @@ const TeacherTable = () => {
   };
 
   return (
-    <div>
-      <h2>Teachers Table</h2>
-      <button onClick={handleCreate}>Create Teacher</button>
+    <div className="px-4 py-2">
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-lg font-semibold">Teachers Table</h2>
+      <button
+        onClick={handleCreate}
+        className="flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600"
+      >
+        <FaPlus className="mr-2" />
+        Create Teacher
+      </button>
+    </div>
       <DynamicTable 
         data={teachers} 
         fields={fields} 
         onEdit={handleEdit} 
         onDelete={handleDelete} 
         onView={handleView} 
+        showView={false} 
       />
     </div>
   );

@@ -9,11 +9,10 @@ const createTeacher = async (req, res, next) => {
     if (!name || !gender || !dob || !contactDetails || !salary || !Array.isArray(assignedClass) || assignedClass.length === 0) {
       return errorResponse(res, 400, 'Missing required fields');
     }
-
     const newTeacher = new Teacher({ name, gender, dob, contactDetails, salary, assignedClass });
     await newTeacher.save();
 
-    // Update each class with the new teacher reference
+    // Update each class with the new teacher reference 
     for (const classId of assignedClass) {
       await Class.findByIdAndUpdate(classId, {
         $push: { teacher: newTeacher._id },
@@ -21,7 +20,7 @@ const createTeacher = async (req, res, next) => {
     }
 
     successResponse(res, 201, 'Teacher created successfully', newTeacher);
-  } catch (error) {
+  } catch (error) { 
     next(error);
   }
 };
