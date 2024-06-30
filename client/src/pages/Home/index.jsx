@@ -31,15 +31,15 @@ const Home = () => {
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-3 gap-4 mb-8">
           <div className="bg-white shadow rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold">{data?.classes}</div>
+            <div className="text-2xl font-bold">{data?.classes || 0}</div>
             <div className="text-gray-500">Total Classes</div>
           </div>
           <div className="bg-white shadow rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold">{data?.students}</div>
+            <div className="text-2xl font-bold">{data?.students || 0}</div>
             <div className="text-gray-500">Total Students</div>
           </div>
           <div className="bg-white shadow rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold">{data?.teachers}</div>
+            <div className="text-2xl font-bold">{data?.teachers || 0}</div>
             <div className="text-gray-500">Total Teachers</div>
           </div>
         </div>
@@ -49,7 +49,7 @@ const Home = () => {
           <div className="text-blue-500 hover:underline cursor-pointer mb-4 flex flex-row items-center" onClick={()=>navigate('/analytics')}>Go to Analytics<AiOutlineArrowRight/></div>
           </div>
           <div className="w-full max-w-md">
-            <PieChart male={data?.genderCounts?.male} female={data?.genderCounts?.female} />
+            <PieChart male={data?.genderCounts?.male || 0} female={data?.genderCounts?.female || 0} />
           </div>
         </div>
       </div>

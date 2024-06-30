@@ -4,22 +4,29 @@ import useFetchData from '../../hooks/useFetchData';
 import { ENDPOINTS, URL } from '../../utils/apiService';
 import DynamicTable from '../../components/Table';
 import { successToast, errorToast } from '../../utils/showToast';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaSortAlphaDown, FaSortAlphaUp } from 'react-icons/fa';
+import Loader from '../../utils/Loader';
 
 const StudentTable = () => {
   const [students, setStudents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
-  const { getApiData, deleteApiData } = useFetchData();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortField, setSortField] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [genderFilter, setGenderFilter] = useState('');
+  const { getApiData, deleteApiData,loading } = useFetchData();
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchStudents(currentPage);
-  }, [currentPage, itemsPerPage]);
+    fetchStudents(currentPage, sortField, sortOrder);
+  }, [currentPage, itemsPerPage, searchQuery, sortField, sortOrder, genderFilter]);
 
   const fetchStudents = async (page) => {
-    const response = await getApiData(`${URL + ENDPOINTS.STUDENT}?page=${page}&limit=${itemsPerPage}`);
+    const response = await getApiData(
+      `${URL + ENDPOINTS.STUDENT}?page=${page}&limit=${itemsPerPage}&studentName=${searchQuery}&sortBy=${sortField}&order=${sortOrder}&gender=${genderFilter}`
+    );
     if (response?.success) {
       const formattedStudents = response?.data?.students.map(student => ({
         ...student,
@@ -61,8 +68,17 @@ const StudentTable = () => {
     }
   };
 
-  const fields = ['name', 'gender', 'dob', 'contactDetails', 'feesPaid', 'class'];
+  const handleSortChange = (field) => {
+    const newOrder = field === sortField ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc';
+    setSortField(field);
+    setSortOrder(newOrder);
+    fetchStudents(currentPage);
+  };
 
+  const fields = ['name', 'gender', 'dob', 'contactDetails', 'feesPaid', 'class'];
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <div className="px-4 py-2">
       <div className="flex justify-between items-center mb-4">
@@ -75,17 +91,43 @@ const StudentTable = () => {
           Create Student
         </button>
       </div>
+      <div className="flex items-center mb-4 space-x-4 gap-4">
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            placeholder="Enter student name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+          />
+        </div>
+        <div className="flex items-center">
+          <label className="text-gray-600 mr-2">Gender:</label>
+          <select
+            value={genderFilter}
+            onChange={(e) => setGenderFilter(e.target.value)}
+            className="px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+          >
+            <option value="">All</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+      </div>
       <DynamicTable
         data={students}
         fields={fields}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onView={handleView}
-        showView={true}
+        showView={false}
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
         setItemsPerPage={setItemsPerPage}
+        sortField={sortField}
+        sortOrder={sortOrder}
+        onSortChange={handleSortChange}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import useFetchData from '../../hooks/useFetchData';
 import { ENDPOINTS, URL } from '../../utils/apiService';
 import { errorToast, successToast } from '../../utils/showToast';
 import BarChart from '../../components/charts/barChart';
+import Loader from '../../utils/Loader';
 
 function ProfitAnalysis() {
   const { getApiData, loading, error } = useFetchData();
@@ -51,7 +52,7 @@ function ProfitAnalysis() {
           />
         </div>
       ) : (
-        <p>Loading...</p>
+        <Loader/>
       )}
     </div>
   );

@@ -94,16 +94,21 @@ const getClassById = async (req, res, next) => {
 // Get all classes with pagination
 const getAllClasses = async (req, res, next) => {
   try {
-    const { page = 1, limit = 5 } = req.query;
+    const { page = 1, limit = 5, className = '', sortBy = 'year', order = 'asc' } = req.query;
     const skip = (page - 1) * limit;
+    const sortOrder = order === 'asc' ? 1 : -1;
 
-    const classes = await Class.find()
+    // Build the query object
+    const query = className ? { name: new RegExp(className, 'i') } : {};
+
+    const classes = await Class.find(query)
       .populate('teacher')
       .populate('students')
+      .sort({ [sortBy]: sortOrder })
       .skip(skip)
       .limit(Number(limit));
 
-    const totalClasses = await Class.countDocuments();
+    const totalClasses = await Class.countDocuments(query);
     const totalPages = Math.ceil(totalClasses / limit);
 
     successResponse(res, 200, 'Classes fetched successfully', {
@@ -115,6 +120,7 @@ const getAllClasses = async (req, res, next) => {
     next(error);
   }
 };
+
 
 module.exports = {
   createClass,

@@ -119,12 +119,25 @@ const getTeacherById = async (req, res, next) => {
 // Get all teachers with pagination
 const getAllTeachers = async (req, res, next) => {
   try {
-    const { page = 1, limit = 5 } = req.query;
+    const { page = 1, limit = 5, teacherName = '', sortBy = 'name', order = 'asc', gender = '' } = req.query;
     const skip = (page - 1) * limit;
+    const query = {};
 
-    const teachers = await Teacher.find().populate('assignedClass').skip(skip).limit(Number(limit));
+    if (teacherName) {
+      query.name = { $regex: teacherName, $options: 'i' };
+    }
 
-    const totalTeachers = await Teacher.countDocuments();
+    if (gender) {
+      query.gender = gender;
+    }
+
+    const teachers = await Teacher.find(query)
+      .populate('assignedClass')
+      .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
+      .skip(skip)
+      .limit(Number(limit));
+
+    const totalTeachers = await Teacher.countDocuments(query);
     const totalPages = Math.ceil(totalTeachers / limit);
 
     successResponse(res, 200, 'Teachers fetched successfully', {
@@ -136,6 +149,7 @@ const getAllTeachers = async (req, res, next) => {
     next(error);
   }
 };
+
 
 module.exports = {
   createTeacher,

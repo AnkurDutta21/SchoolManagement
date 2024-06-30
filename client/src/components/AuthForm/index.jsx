@@ -5,6 +5,7 @@ import useFetchData from '../../hooks/useFetchData';
 import { ENDPOINTS, URL } from '../../utils/apiService';
 import { errorToast, successToast } from '../../utils/showToast';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../../utils/Loader';
 
 const DynamicAuthForm = ({ formType, setFormType }) => {
     const navigate = useNavigate();
@@ -55,7 +56,9 @@ const DynamicAuthForm = ({ formType, setFormType }) => {
             setSubmitting(false);
         }
     };
-
+if(loading){
+    <Loader/>
+}
     return (
         <div className="max-w-md mx-auto mt-10">
             <Formik

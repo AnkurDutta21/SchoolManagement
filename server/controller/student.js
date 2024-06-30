@@ -146,16 +146,25 @@ const getStudentById = async (req, res, next) => {
 
 const getAllStudents = async (req, res, next) => {
   try {
-    const { page = 1, limit = 5 } = req.query;
+    const { page = 1, limit = 5, studentName = '', sortBy = 'name', order = 'asc', gender = '' } = req.query;
     const skip = (page - 1) * limit;
+    const query = {};
 
-    // Get students with pagination
-    const students = await Student.find()
+    if (studentName) {
+      query.name = { $regex: studentName, $options: 'i' };
+    }
+
+    if (gender) {
+      query.gender = gender;
+    }
+
+    const students = await Student.find(query)
       .populate("class")
+      .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
       .skip(skip)
       .limit(Number(limit));
 
-    const totalStudents = await Student.countDocuments();
+    const totalStudents = await Student.countDocuments(query);
     const totalPages = Math.ceil(totalStudents / limit);
 
     successResponse(res, 200, "Students fetched successfully", {
@@ -167,6 +176,8 @@ const getAllStudents = async (req, res, next) => {
     next(error);
   }
 };
+
+
 
 module.exports = {
   createStudent,
