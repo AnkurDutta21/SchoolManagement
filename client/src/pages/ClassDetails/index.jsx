@@ -45,7 +45,7 @@ const ClassDetails = () => {
 
     fetchData();
     fetchGenderData();
-  }, [id, getApiData]); 
+  }, [id]); 
 
   if (loading) return <Loader />; 
 

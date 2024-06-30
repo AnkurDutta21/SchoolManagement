@@ -13,8 +13,8 @@ const ClassTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchInput, setSearchInput] = useState(''); // Separate state for input field
-  const [searchQuery, setSearchQuery] = useState(''); // Debounced query state
+  const [searchInput, setSearchInput] = useState(''); 
+  const [searchQuery, setSearchQuery] = useState(''); 
   const [sortField, setSortField] = useState('year');
   const [sortOrder, setSortOrder] = useState('asc');
   const { getApiData, deleteApiData, loading } = useFetchData();
@@ -75,7 +75,7 @@ const ClassTable = () => {
   const debouncedSearch = useCallback(
     debounce((query) => {
       setSearchQuery(query);
-      setCurrentPage(1); // Reset to the first page for new search
+      setCurrentPage(1); 
     }, 1500),
     []
   );
